@@ -1,0 +1,13 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+apply from : '../common.gradle'
+
+android {
+    namespace 'com.demo.widget'
+}
+dependencies {
+    // 基础库（不包任何第三方框架）
+    implementation project(path: ':base')
+}

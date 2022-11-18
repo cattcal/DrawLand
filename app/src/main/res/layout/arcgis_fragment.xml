@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <com.demo.arcgis.draw.BaseDrawMapView
+        android:id="@+id/base_draw_map_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <LinearLayout
+        android:layout_marginTop="@dimen/dp_48"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="切换底图" />
+
+        <Button
+            android:id="@+id/btn_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="定位" />
+
+        <Button
+            android:id="@+id/btn_location1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="获取经纬度" />
+
+        <Button
+            android:id="@+id/btn_draw_land"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="画地块" />
+
+
+        <Button
+            android:id="@+id/btn_add_point"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="添加点" />
+
+        <Button
+            android:id="@+id/btn_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="删除" />
+
+        <Button
+            android:id="@+id/btn_undo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="撤销" />
+
+        <Button
+            android:id="@+id/btn_complete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="完成" />
+
+        <Button
+            android:id="@+id/btn_draw_length"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="测距" />
+
+        <Button
+            android:id="@+id/btn_draw_area"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="测面" />
+    </LinearLayout>
+
+
+</RelativeLayout>

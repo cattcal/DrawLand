@@ -1,0 +1,5 @@
+<resources>
+
+    <string name="location_failure">定位失败</string>
+    <string name="out_of_china">当前位置超出中国</string>
+</resources>

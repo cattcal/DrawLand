@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.demo.arcgis.draw.view.MirrorMapView
+        android:id="@+id/mirror_map_view_back"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentRight="true" />
+
+    <com.demo.arcgis.mapview.BaseMapView
+        android:id="@+id/baseMapView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.demo.arcgis.draw.view.LandView
+        android:id="@+id/landView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.demo.arcgis.draw.view.MirrorMapView
+        android:id="@+id/mirror_map_view_front"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentRight="true" />
+
+</RelativeLayout>

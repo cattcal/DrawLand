@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity">
+
+    <com.hjq.bar.TitleBar
+        android:id="@+id/mTitleBar"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/base_draw_map_view"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"/>
+
+    <com.demo.mapbox.draw.BaseDrawMapView
+        app:layout_constraintTop_toBottomOf="@+id/mTitleBar"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/base_draw_map_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp" />
+
+
+
+    <com.hjq.shape.view.ShapeImageView
+        android:id="@+id/iv_layer_manager"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp_10"
+        android:layout_marginRight="@dimen/dp_5"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/dp_6"
+        app:layout_constraintTop_toBottomOf="@id/mTitleBar"
+        app:layout_constraintRight_toRightOf="parent"
+        app:shape_radius="@dimen/dp_5"
+        app:shape_solidColor="@color/white"
+        app:srcCompat="@drawable/ic_map_layer" />
+
+    <com.hjq.shape.view.ShapeImageView
+        android:id="@+id/iv_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp_5"
+        android:layout_marginBottom="@dimen/dp_15"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="@dimen/dp_5"
+        app:shape_radius="@dimen/dp_5"
+        app:shape_solidColor="@color/white"
+        app:srcCompat="@drawable/map_location_ic" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tint="@color/red"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/add_ic" />
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
