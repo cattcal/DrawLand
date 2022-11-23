@@ -12,4 +12,6 @@ object Contracts {
      * 跟坐标系相关
      */
     val CUSTOM_REFERENCE = SpatialReference.create(4490)
+
+
 }

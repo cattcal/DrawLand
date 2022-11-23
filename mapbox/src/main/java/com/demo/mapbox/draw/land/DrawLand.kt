@@ -2,6 +2,12 @@ package com.demo.mapbox.draw.land
 
 import android.graphics.Color
 import android.graphics.PointF
+import com.demo.mapbox.draw.entity.LandEntity
+import com.demo.mapbox.util.DensityUtil
+import com.demo.mapbox.util.GeometryUtil.getArea
+import com.demo.mapbox.util.GeometryUtil.getCenter
+import com.demo.mapbox.util.GeometryUtil.isSelect
+import com.demo.mapbox.util.NumberFormatUtil.doubleRemoveEndZero
 import com.google.gson.JsonObject
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
@@ -17,12 +23,6 @@ import com.mapbox.mapboxsdk.style.layers.LineLayer
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
-import com.demo.mapbox.draw.entity.LandEntity
-import com.demo.mapbox.util.DensityUtil.dip2px
-import com.demo.mapbox.util.GeometryUtil.getArea
-import com.demo.mapbox.util.GeometryUtil.getCenter
-import com.demo.mapbox.util.GeometryUtil.isSelect
-import com.demo.mapbox.util.NumberFormatUtil.doubleRemoveEndZero
 import java.util.Stack
 
 /**
@@ -30,23 +30,33 @@ import java.util.Stack
  * @time: 2022/11/16
  * @desc:
  */
-class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultData {
-    private val mLandOperas: Stack<LandEntity>
+class DrawLand(private val mMap: MapboxMap?, uuids: String) : IDrawLand, IResultData {
+
+
+    private val mLandOperas: Stack<LandEntity> = Stack()
     private val mUuid: String
     var selectIndex = 0
-        private set
-    private val mPointList: MutableList<LatLng>
+    var mPointList: MutableList<LatLng?> = mutableListOf()
     override var area: String? = null
-        private set
 
+    private var state = -1 // 地块状态 -1代表新增 1代表修改
+    private var mLandEntity // 地块详情
+            : com.demo.drawland.LandEntity? = null
+    constructor(mMap: MapboxMap?, uuids: String, entity: com.demo.drawland.LandEntity?, state: Int) : this(mMap, uuids){
+        this.mLandEntity=entity
+        mPointList.addAll(mLandEntity?.latLngs!!)
+        this.state=state
+        draw()
+    }
     init {
-        mLandOperas = Stack()
         mUuid = uuids
         mPointList = ArrayList()
     }
 
+
+
     override fun add(point: LatLng?) {
-        val pointF = mMap.projection.toScreenLocation(point!!)
+        val pointF = mMap!!.projection.toScreenLocation(point!!)
         if (!touchPoint(pointF)) {
             mLandOperas.push(LandEntity(mPointList.size, mPointList))
             mPointList.add(point)
@@ -65,7 +75,7 @@ class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultD
         if (isUndo) {
             val pop = mLandOperas.pop()
             mPointList.clear()
-            mPointList.addAll(pop.getLatLngList())
+            mPointList.addAll(pop.latLngList)
             selectIndex = pop.selectPosition
             draw()
         }
@@ -76,13 +86,13 @@ class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultD
 
     override fun complete() {
         clear()
-        drawPolygon()
-        drawLine()
-        drawArea()
+//        drawPolygon()
+//        drawLine()
+//        drawArea()
     }
 
-    override fun selectLand(latLng: LatLng?): Boolean {
-        val isSelectLand = isSelect(latLng!!, mPointList)
+    override fun selectLand(latLng: LatLng): Boolean {
+        val isSelectLand = isSelect(latLng, mPointList)
         if (isSelectLand) {
             draw()
         }
@@ -92,9 +102,10 @@ class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultD
     override fun touchPoint(point: PointF): Boolean {
         for (i in mPointList.indices) {
             val point1 = mPointList[i]
-            val point2 = mMap.projection.toScreenLocation(point1)
-            if (Math.abs(point.x - point2.x) < dip2px(20f)
-                && Math.abs(point.y - point2.y) < dip2px(20f)
+            val point2 = mMap!!.projection.toScreenLocation(point1!!)
+            if (Math.abs(point.x - point2.x) < DensityUtil.dip2px(20f) && Math.abs(point.y - point2.y) < DensityUtil.dip2px(
+                    20f
+                )
             ) {
                 if (i != selectIndex - 1) { // 如果不是选中的
                     selectIndex = i + 1
@@ -125,7 +136,7 @@ class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultD
      *
      * @param point 最后的坐标点
      */
-    fun moveEnd(point: LatLng) {
+    fun moveEnd(point: LatLng?) {
         mPointList.removeAt(selectIndex - 1)
         mPointList.add(selectIndex - 1, point)
         draw()
@@ -139,7 +150,7 @@ class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultD
         drawArea()
     }
 
-    override val pointList: List<LatLng>
+    override val pointList: MutableList<LatLng?>
         get() = mPointList
 
     /**
@@ -152,17 +163,16 @@ class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultD
         val pointss: MutableList<List<Point>> = ArrayList()
         val points: MutableList<Point> = ArrayList()
         for (latLng in mPointList) {
-            points.add(Point.fromLngLat(latLng.longitude, latLng.latitude))
+            points.add(Point.fromLngLat(latLng!!.longitude, latLng.latitude))
         }
         pointss.add(points)
         val polygon = Polygon.fromLngLats(pointss)
         val feature = Feature.fromGeometry(polygon)
         val jsonSource = GeoJsonSource(POLYGON_SOURCE + mUuid, feature)
-        mMap.style!!.addSource(jsonSource)
+        mMap!!.style!!.addSource(jsonSource)
         val fillLayer = FillLayer(POLYGON_LAYER + mUuid, POLYGON_SOURCE + mUuid)
         fillLayer.setProperties(
-            PropertyFactory.fillColor(Color.WHITE),
-            PropertyFactory.fillOpacity(0.4f)
+            PropertyFactory.fillColor(Color.WHITE), PropertyFactory.fillOpacity(0.4f)
         )
         mMap.style!!.addLayer(fillLayer)
     }
@@ -176,7 +186,7 @@ class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultD
         }
         val points: MutableList<Point> = ArrayList()
         for (latLng in mPointList) {
-            points.add(Point.fromLngLat(latLng.longitude, latLng.latitude))
+            points.add(Point.fromLngLat(latLng!!.longitude, latLng.latitude))
         }
         val features: MutableList<Feature> = ArrayList()
         val positions: MutableList<Point> = ArrayList(points)
@@ -187,11 +197,10 @@ class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultD
         features.add(Feature.fromGeometry(lineString))
         val featureCollection = FeatureCollection.fromFeatures(features)
         val jsonSource = GeoJsonSource(LINE_SOURCE + mUuid, featureCollection)
-        mMap.style!!.addSource(jsonSource)
+        mMap!!.style!!.addSource(jsonSource)
         val lineLayer = LineLayer(LINE_LAYER + mUuid, LINE_SOURCE + mUuid)
         lineLayer.setProperties(
-            PropertyFactory.lineColor(Color.YELLOW),
-            PropertyFactory.lineWidth(3f)
+            PropertyFactory.lineColor(Color.YELLOW), PropertyFactory.lineWidth(3f)
         )
         mMap.style!!.addLayer(lineLayer)
     }
@@ -203,7 +212,7 @@ class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultD
         val features: MutableList<Feature> = ArrayList(mPointList.size)
         val points: MutableList<Point> = ArrayList()
         for (latLng in mPointList) {
-            points.add(Point.fromLngLat(latLng.longitude, latLng.latitude))
+            points.add(Point.fromLngLat(latLng!!.longitude, latLng.latitude))
         }
         for (i in points.indices) {
             val jsonObject = JsonObject()
@@ -212,7 +221,7 @@ class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultD
         }
         val featureCollection = FeatureCollection.fromFeatures(features)
         val jsonSource = GeoJsonSource(POINT_SOURCE + mUuid, featureCollection)
-        mMap.style!!.addSource(jsonSource)
+        mMap!!.style!!.addSource(jsonSource)
         val circleLayer = CircleLayer(POINT_LAYER + mUuid, POINT_SOURCE + mUuid)
         val stops = arrayOfNulls<Expression.Stop>(mPointList.size)
         for (i in mPointList.indices) {
@@ -241,11 +250,11 @@ class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultD
         }
         area = getArea(mPointList).toEngineeringString()
         val center = getCenter(mPointList)
-        val point = Point.fromLngLat(center.longitude, center.latitude)
+        val point = Point.fromLngLat(center!!.longitude, center.latitude)
         val jsonObject = JsonObject()
         jsonObject.addProperty("area", doubleRemoveEndZero(area.toString()) + "亩")
         val jsonSource = GeoJsonSource(AREA_SOURCE + mUuid, Feature.fromGeometry(point, jsonObject))
-        mMap.style!!.addSource(jsonSource)
+        mMap!!.style!!.addSource(jsonSource)
         val symbolLayer = SymbolLayer(AREA_LAYER + mUuid, AREA_SOURCE + mUuid)
         symbolLayer.setProperties(
             PropertyFactory.textColor(Color.BLACK),
@@ -271,32 +280,44 @@ class DrawLand(private val mMap: MapboxMap, uuids: String) : IDrawLand, IResultD
      * 删除点
      */
     private fun deletePoint() {
-        mMap.style!!.removeLayer(POINT_LAYER + mUuid)
-        mMap.style!!.removeSource(POINT_SOURCE + mUuid)
+        mMap?.style?.apply {
+            removeLayer(POINT_LAYER + mUuid)
+            removeSource(POINT_SOURCE + mUuid)
+        }
+
     }
 
     /**
      * 删除线
      */
     private fun deleteLine() {
-        mMap.style!!.removeLayer(LINE_LAYER + mUuid)
-        mMap.style!!.removeSource(LINE_SOURCE + mUuid)
+        mMap?.style?.apply {
+            removeLayer(LINE_LAYER + mUuid)
+            removeSource(LINE_SOURCE + mUuid)
+        }
+
     }
 
     /**
      * 删除面
      */
     private fun deletePolygon() {
-        mMap.style!!.removeLayer(POLYGON_LAYER + mUuid)
-        mMap.style!!.removeSource(POLYGON_SOURCE + mUuid)
+        mMap?.style?.apply {
+            removeLayer(POLYGON_LAYER + mUuid)
+            removeSource(POLYGON_SOURCE + mUuid)
+        }
+
     }
 
     /**
      * 删除面积
      */
     private fun deleteArea() {
-        mMap.style!!.removeLayer(AREA_LAYER + mUuid)
-        mMap.style!!.removeSource(AREA_SOURCE + mUuid)
+        mMap?.style?.apply {
+            removeLayer(AREA_LAYER + mUuid)
+            removeSource(AREA_SOURCE + mUuid)
+        }
+
     }
 
     companion object {

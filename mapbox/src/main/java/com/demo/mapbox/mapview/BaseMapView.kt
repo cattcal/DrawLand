@@ -44,7 +44,6 @@ class BaseMapView @JvmOverloads constructor(
     private var mLocationOperations: LocationOperations? = null
     private var mLocationListener: ILocationListener? = null
     var map: MapboxMap? = null
-        private set
     private var mStyle: Style? = null
     /**
      * 是否显示的矢量底图
@@ -67,26 +66,29 @@ class BaseMapView @JvmOverloads constructor(
         addOnDidFailLoadingMapListener { errorMessage: String? ->
 //            error(TAG, errorMessage!!)
             if (mLoadMapListener != null) {
-                mLoadMapListener!!.onFailed(400, errorMessage)
+                mLoadMapListener?.onFailed(400, errorMessage)
             }
+
         }
+
         // 开始加载
         addOnWillStartLoadingMapListener {
             if (mLoadMapListener != null) {
-                mLoadMapListener!!.onLoading()
+                mLoadMapListener?.onLoading()
             }
         }
+
         // 加载成功
         addOnDidFinishLoadingMapListener {
             if (mLoadMapListener != null) {
-                mLoadMapListener!!.onLoadComplete()
+                mLoadMapListener?.onLoadComplete(map)
             }
         }
         getMapAsync { mapboxMap: MapboxMap ->
             map = mapboxMap
             mapboxMap.setStyle(Style.SATELLITE_STREETS) { style: Style? ->
                 mStyle = style
-                hideLogo(map!!)
+                map?.let { hideLogo(it) }
                 initTdtLayer()
                 initLocation()
                 addImage()
@@ -107,23 +109,23 @@ class BaseMapView @JvmOverloads constructor(
     private fun initLocation() {
         mLocationOperations = LocationOperations(context.applicationContext)
         // 设置时间间隔
-        mLocationOperations!!.setInterval(3000)
-        mLocationOperations!!.setTransform(TransformGcj02ToWgs84())
-        mLocationOperations!!.setLocationListener(object : ILocationListener {
+        mLocationOperations?.setInterval(3000)
+        mLocationOperations?.setTransform(TransformGcj02ToWgs84())
+        mLocationOperations?.setLocationListener(object : ILocationListener {
             override fun onLocationSuccess(location: ILocation) {
-                mLocationOperations!!.stop()
+                mLocationOperations?.stop()
                 mCurLatLng = LatLng(location.latitude, location.longitude)
                 addLocationMarker()
                 moveToLocation()
                 if (mLocationListener != null) {
-                    mLocationListener!!.onLocationSuccess(location)
+                    mLocationListener?.onLocationSuccess(location)
                 }
             }
 
             override fun onLocationFailure(message: String?) {
                 Log.e(TAG, message!!)
                 if (mLocationListener != null) {
-                    mLocationListener!!.onLocationFailure(message)
+                    mLocationListener?.onLocationFailure(message)
                 }
             }
         })
@@ -138,16 +140,16 @@ class BaseMapView @JvmOverloads constructor(
         }
         val point = Point.fromLngLat(mCurLatLng!!.longitude, mCurLatLng!!.latitude)
         val feature = Feature.fromGeometry(point)
-        if (mStyle!!.getSource(LOCATION_SOURCE) == null) {
+        if (mStyle?.getSource(LOCATION_SOURCE) == null) {
             val jsonSource = GeoJsonSource(LOCATION_SOURCE, feature)
-            mStyle!!.addSource(jsonSource)
+            mStyle?.addSource(jsonSource)
             val layer = SymbolLayer(LOCATION_LAYER, LOCATION_SOURCE)
             layer.setProperties(
                 PropertyFactory.iconImage("location_image")
             )
-            mStyle!!.addLayerAbove(layer, Contract.BASE_EMPTY_LAYER)
+            mStyle?.addLayerAbove(layer, XINGTU_CIA_LAYER)
         } else {
-            (mStyle!!.getSource(LOCATION_SOURCE) as GeoJsonSource?)!!.setGeoJson(feature)
+            (mStyle?.getSource(LOCATION_SOURCE) as GeoJsonSource?)!!.setGeoJson(feature)
         }
     }
 
@@ -159,7 +161,7 @@ class BaseMapView @JvmOverloads constructor(
             return
         }
         val position = CameraPosition.Builder().target(mCurLatLng).zoom(16.0).build()
-        map!!.animateCamera(CameraUpdateFactory.newCameraPosition(position), 1000)
+        map?.animateCamera(CameraUpdateFactory.newCameraPosition(position), 1000)
     }
 
     /**
@@ -174,7 +176,7 @@ class BaseMapView @JvmOverloads constructor(
         addXingTuImgLayer()
         addXingTuCiaLayer()
 
-        switchImage("Mapbox")
+        switchImage("星图地球")
     }
 
     /**
@@ -196,9 +198,9 @@ class BaseMapView @JvmOverloads constructor(
         val tileSet = TileSet("8", Contract.ROAD_SOURCE_URL)
         tileSet.maxZoom = 17f
         val roadSource = RasterSource(ROAD_SOURCE, tileSet, 256)
-        mStyle!!.addSource(roadSource)
+        mStyle?.addSource(roadSource)
         val roadLayer = RasterLayer(ROAD_LAYER, ROAD_SOURCE)
-        mStyle!!.addLayer(roadLayer)
+        mStyle?.addLayer(roadLayer)
     }
 
     /**
@@ -208,9 +210,9 @@ class BaseMapView @JvmOverloads constructor(
         val tileSet = TileSet("8", Contract.SATELLITE_SOURCE_URL)
         tileSet.maxZoom = 17f
         val satelliteSource = RasterSource(SATELLITE_SOURCE, tileSet, 256)
-        mStyle!!.addSource(satelliteSource)
+        mStyle?.addSource(satelliteSource)
         val satelliteLayer = RasterLayer(SATELLITE_LAYER, SATELLITE_SOURCE)
-        mStyle!!.addLayer(satelliteLayer)
+        mStyle?.addLayer(satelliteLayer)
     }
 
     /**
@@ -220,27 +222,27 @@ class BaseMapView @JvmOverloads constructor(
         val tileSet = TileSet("8", Contract.DIGITAL_SOURCE_URL)
         tileSet.maxZoom = 17f
         val digitalSource = RasterSource(DIGITAL_SOURCE, tileSet, 256)
-        mStyle!!.addSource(digitalSource)
+        mStyle?.addSource(digitalSource)
         val digitalLayer = RasterLayer(DIGITAL_LAYER, DIGITAL_SOURCE)
-        mStyle!!.addLayerBelow(digitalLayer, Contract.BASE_EMPTY_LAYER)
+        mStyle?.addLayerBelow(digitalLayer, Contract.BASE_EMPTY_LAYER)
     }
 
     private fun addXingTuImgLayer() {
         val tileSet = TileSet("8", Contract.XINGTU_IMG_SOURCE_URL)
         tileSet.maxZoom = 17f
         val digitalSource = RasterSource(XINGTU_IMG_SOURCE, tileSet, 256)
-        mStyle!!.addSource(digitalSource)
+        mStyle?.addSource(digitalSource)
         val digitalLayer = RasterLayer(XINGTU_IMG_LAYER, XINGTU_IMG_SOURCE)
-        mStyle!!.addLayer(digitalLayer)
+        mStyle?.addLayer(digitalLayer)
     }
 
     private fun addXingTuCiaLayer() {
         val tileSet = TileSet("8", Contract.XINGTU_CIA_SOURCE_URL)
         tileSet.maxZoom = 17f
         val digitalSource = RasterSource(XINGTU_CIA_SOURCE, tileSet, 256)
-        mStyle!!.addSource(digitalSource)
+        mStyle?.addSource(digitalSource)
         val digitalLayer = RasterLayer(XINGTU_CIA_LAYER, XINGTU_CIA_SOURCE)
-        mStyle!!.addLayer(digitalLayer)
+        mStyle?.addLayer(digitalLayer)
     }
 
     /**
@@ -251,7 +253,7 @@ class BaseMapView @JvmOverloads constructor(
         layer.setProperties(
             PropertyFactory.backgroundColor(Color.TRANSPARENT)
         )
-        mStyle!!.addLayer(layer)
+        mStyle?.addLayer(layer)
     }
 
     /**
@@ -347,8 +349,8 @@ class BaseMapView @JvmOverloads constructor(
      *
      * @return 地图的中心点
      */
-    val center: LatLng
-        get() = map!!.cameraPosition.target
+    val center: LatLng?
+        get() = map?.cameraPosition?.target
 
     /**
      * 设置地图的中心点
@@ -356,10 +358,13 @@ class BaseMapView @JvmOverloads constructor(
      * @param center         中心点信息
      * @param cameraPosition 一些信息
      */
-    fun setCenter(center: LatLng?, cameraPosition: CameraPosition) {
-        val tarPosition = CameraPosition.Builder().target(center).zoom(cameraPosition.zoom)
-            .bearing(cameraPosition.bearing).tilt(cameraPosition.tilt).build()
-        map!!.moveCamera(CameraUpdateFactory.newCameraPosition(tarPosition))
+    fun setCenter(center: LatLng?, cameraPosition: CameraPosition?) {
+
+        val tarPosition = cameraPosition?.let {
+            CameraPosition.Builder().target(center).zoom(cameraPosition.zoom)
+                .bearing(cameraPosition.bearing).tilt(cameraPosition.tilt).build()
+        }
+        tarPosition?.let { CameraUpdateFactory.newCameraPosition(it) }?.let { map?.moveCamera(it) }
     }
 
     companion object {

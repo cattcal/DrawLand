@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import com.demo.mapbox.draw.manager.DrawType
+import com.demo.mapbox.util.DensityUtil
 import com.demo.mapbox.util.DensityUtil.dip2px
 
 /**
@@ -27,7 +28,7 @@ class MirrorLandView @JvmOverloads constructor(
     private val mLinePaint: Paint
     private val mPolygonPaint: Paint
     private var mSelectIndex = 0
-    private var mPoints: MutableList<PointF>?
+    private var mPoints: MutableList<PointF?>?
     private val mPath: Path
     private var mDrawType: DrawType? = null
 
@@ -45,7 +46,7 @@ class MirrorLandView @JvmOverloads constructor(
         // 线的颜色
         mLinePaint = Paint(Paint.ANTI_ALIAS_FLAG)
         mLinePaint.style = Paint.Style.STROKE
-        mLinePaint.strokeWidth = dip2px(3f).toFloat()
+        mLinePaint.strokeWidth = DensityUtil.dip2px(3f).toFloat()
         mLinePaint.color = Color.YELLOW
 
         // 面
@@ -77,9 +78,19 @@ class MirrorLandView @JvmOverloads constructor(
     private fun drawPoint(canvas: Canvas) {
         for (i in mPoints!!.indices) {
             val pointF = mPoints!![i]
-            canvas.drawCircle(pointF.x, pointF.y, dip2px(12f).toFloat(), mOuterPointPaint)
+            canvas.drawCircle(
+                pointF!!.x,
+                pointF.y,
+                dip2px(12f).toFloat(),
+                mOuterPointPaint
+            )
             if (i == mSelectIndex) {
-                canvas.drawCircle(pointF.x, pointF.y, dip2px(9f).toFloat(), mInsertPointPaint)
+                canvas.drawCircle(
+                    pointF.x,
+                    pointF.y,
+                    DensityUtil.dip2px(9f).toFloat(),
+                    mInsertPointPaint
+                )
             }
         }
     }
@@ -90,9 +101,9 @@ class MirrorLandView @JvmOverloads constructor(
         for (i in mPoints!!.indices) {
             val pointF = mPoints!![i]
             if (i == 0) {
-                mPath.moveTo(pointF.x, pointF.y)
+                mPath.moveTo(pointF!!.x, pointF.y)
             } else {
-                mPath.lineTo(pointF.x, pointF.y)
+                mPath.lineTo(pointF!!.x, pointF.y)
             }
         }
         if (mDrawType != DrawType.MEASURE_LENGTH) {
@@ -102,8 +113,8 @@ class MirrorLandView @JvmOverloads constructor(
         canvas.drawPath(mPath, mLinePaint)
     }
 
-    fun setTouchEvent(event: MotionEvent?) {
-        val pointF = PointF(event!!.x, event.y)
+    fun setTouchEvent(event: MotionEvent) {
+        val pointF = PointF(event.x, event.y)
         when (event.action) {
             MotionEvent.ACTION_DOWN -> visibility = VISIBLE
             MotionEvent.ACTION_MOVE -> {
@@ -117,16 +128,16 @@ class MirrorLandView @JvmOverloads constructor(
     }
 
     // 设置数据 points 点集合 selectIndex 选则的点的位置
-    fun setPoints(points: List<PointF>?, selectIndex: Int) {
+    fun setPoints(points: List<PointF?>?, selectIndex: Int) {
         if (selectIndex == -1 || selectIndex >= points!!.size) {
             return
         }
-        val center = points[selectIndex]
-        val disX = width / 2 - center.x
+        val center = points!![selectIndex]
+        val disX = width / 2 - center!!.x
         val disY = height / 2 - center.y
-        val pointFS: MutableList<PointF> = ArrayList(points.size)
+        val pointFS: MutableList<PointF?> = ArrayList(points.size)
         for (point in points) {
-            pointFS.add(PointF(point.x + disX, point.y + disY))
+            pointFS.add(PointF(point!!.x + disX, point.y + disY))
         }
         mPoints = pointFS
         mSelectIndex = selectIndex
@@ -138,7 +149,7 @@ class MirrorLandView @JvmOverloads constructor(
      *
      * @param points 坐标点
      */
-    fun setPoints(points: List<PointF>?) {
+    fun setPoints(points: List<PointF?>?) {
         setPoints(points, mSelectIndex)
     }
 }

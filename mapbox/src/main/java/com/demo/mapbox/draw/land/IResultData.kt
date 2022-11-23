@@ -20,5 +20,5 @@ interface IResultData {
      *
      * @return 点集合
      */
-    val pointList: List<LatLng>
+    val pointList: List<LatLng?>
 }

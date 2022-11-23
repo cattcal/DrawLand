@@ -76,12 +76,22 @@
         </activity>
         <!-- 首页 -->
         <activity
-            android:name=".ui.activity.HomeActivity"
+            android:name=".MainActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
 
+        <activity
+            android:name=".BidInsActivity"
+            android:launchMode="singleTop"
+            android:label="@string/bid_ins_title"
+            android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".DrawLandActivity"
+            android:launchMode="singleTop"
+            android:label="@string/bid_ins_title"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.amap.api.v2.apikey"

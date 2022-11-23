@@ -5,17 +5,14 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 /**
  * @author: hujw
  * @time: 2022/11/16
- * @desc:
+ * @desc: 每次操作 entity
  */
-class LandEntity(val selectPosition: Int, latLngs: List<LatLng>?) {
-    private val latLngList: MutableList<LatLng>
+class LandEntity(val selectPosition: Int, latLngs: List<LatLng?>?) {
+    var latLngList: MutableList<LatLng?> = ArrayList()
 
     init {
-        latLngList = ArrayList()
         latLngList.addAll(latLngs!!)
     }
 
-    fun getLatLngList(): List<LatLng> {
-        return latLngList
-    }
+
 }

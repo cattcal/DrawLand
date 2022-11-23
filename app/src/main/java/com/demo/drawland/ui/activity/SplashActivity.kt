@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter
 import android.content.Intent
 import android.view.View
 import com.airbnb.lottie.LottieAnimationView
+import com.demo.drawland.MainActivity
 import com.gyf.immersionbar.BarHide
 import com.gyf.immersionbar.ImmersionBar
 import com.demo.drawland.R
@@ -32,7 +33,8 @@ class SplashActivity : AppActivity() {
         lottieView?.addAnimatorListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 lottieView?.removeAnimatorListener(this)
-                HomeActivity.start(this@SplashActivity)
+                startActivity(MainActivity::class.java)
+//                HomeActivity.start(this@SplashActivity)
                 finish()
             }
         })

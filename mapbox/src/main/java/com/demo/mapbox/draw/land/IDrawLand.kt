@@ -44,7 +44,7 @@ interface IDrawLand {
      * @param point 点击位置
      * @return 是否被选中
      */
-    fun selectLand(point: LatLng?): Boolean
+    fun selectLand(point: LatLng): Boolean
 
     /**
      * 点击地图是否点中了某个点

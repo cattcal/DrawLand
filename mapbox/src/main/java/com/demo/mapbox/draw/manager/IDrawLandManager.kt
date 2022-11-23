@@ -1,5 +1,6 @@
 package com.demo.mapbox.draw.manager
 
+import com.demo.drawland.LandEntity
 import com.demo.mapbox.draw.land.DrawLand
 import com.demo.mapbox.draw.land.IDrawLand
 
@@ -15,7 +16,7 @@ interface IDrawLandManager : IDrawLand {
      * @param drawType 勾画方式
      */
     fun startDraw(drawType: DrawType?)
-
+    fun startDraw(drawType: DrawType?,entity: LandEntity?)
     /**
      * 获取地块勾画的集合
      *

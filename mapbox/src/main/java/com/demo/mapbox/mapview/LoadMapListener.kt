@@ -1,5 +1,7 @@
 package com.demo.mapbox.mapview
 
+import com.mapbox.mapboxsdk.maps.MapboxMap
+
 /**
  * @author: hujw
  * @time: 2022/11/16
@@ -14,7 +16,7 @@ interface LoadMapListener {
     /**
      * 加载成功
      */
-    fun onLoadComplete()
+    fun onLoadComplete(mapboxMap: MapboxMap?)
 
     /**
      * 加载失败

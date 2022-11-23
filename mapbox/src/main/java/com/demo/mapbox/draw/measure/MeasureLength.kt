@@ -16,9 +16,12 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.demo.mapbox.draw.entity.LandEntity
+import com.demo.mapbox.util.DensityUtil
 import com.demo.mapbox.util.DensityUtil.dip2px
+import com.demo.mapbox.util.GeometryUtil
 import com.demo.mapbox.util.GeometryUtil.getCenter
 import com.demo.mapbox.util.GeometryUtil.getLength
+import com.demo.mapbox.util.NumberFormatUtil
 import com.demo.mapbox.util.NumberFormatUtil.doubleRemoveEndZero
 import java.util.Stack
 
@@ -38,7 +41,7 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      */
     var selectIndex = 0
         private set
-    private val mPointList: MutableList<LatLng>
+    private val mPointList: MutableList<LatLng?>
 
     init {
         mLandOperas = Stack()
@@ -47,10 +50,8 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
     }
 
     override fun add(point: LatLng?) {
-        val pointF = point?.let {
-            mMap?.projection!!.toScreenLocation(it)
-        }
-        if (!pointF?.let { touchPoint(it) }!!) {
+        val pointF = mMap!!.projection.toScreenLocation(point!!)
+        if (!touchPoint(pointF)) {
             mLandOperas.push(LandEntity(mPointList.size, mPointList))
             mPointList.add(point)
             selectIndex = mPointList.size
@@ -68,7 +69,7 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         if (isUndo) {
             val pop = mLandOperas.pop()
             mPointList.clear()
-            mPointList.addAll(pop.getLatLngList())
+            mPointList.addAll(pop.latLngList)
             selectIndex = pop.selectPosition
             draw()
         }
@@ -86,9 +87,9 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
     override fun touchPoint(point: PointF): Boolean {
         for (i in mPointList.indices) {
             val point1 = mPointList[i]
-            val point2 = mMap?.projection!!.toScreenLocation(point1)
-            if (Math.abs(point.x - point2.x) < dip2px(20f)
-                && Math.abs(point.y - point2.y) < dip2px(20f)
+            val point2 = mMap!!.projection.toScreenLocation(point1!!)
+            if (Math.abs(point.x - point2.x) < DensityUtil.dip2px(20f)
+                && Math.abs(point.y - point2.y) < DensityUtil.dip2px(20f)
             ) {
                 if (i != selectIndex - 1) { // 如果不是选中的
                     selectIndex = i + 1
@@ -119,7 +120,7 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      *
      * @param point 最后的坐标点
      */
-    fun moveEnd(point: LatLng) {
+    fun moveEnd(point: LatLng?) {
         mPointList.removeAt(selectIndex - 1)
         mPointList.add(selectIndex - 1, point)
         draw()
@@ -140,7 +141,7 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      *
      * @return 点集合
      */
-    val pointList: List<LatLng>
+    val pointList: List<LatLng?>
         get() = mPointList
 
     /**
@@ -152,7 +153,7 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         }
         val points: MutableList<Point> = ArrayList()
         for (latLng in mPointList) {
-            points.add(Point.fromLngLat(latLng.longitude, latLng.latitude))
+            points.add(Point.fromLngLat(latLng!!.longitude, latLng.latitude))
         }
         val features: MutableList<Feature> = ArrayList()
         val positions: List<Point> = ArrayList(points)
@@ -160,7 +161,7 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         features.add(Feature.fromGeometry(lineString))
         val featureCollection = FeatureCollection.fromFeatures(features)
         val jsonSource = GeoJsonSource(LINE_SOURCE + mUuid, featureCollection)
-        mMap?.style!!.addSource(jsonSource)
+        mMap!!.style!!.addSource(jsonSource)
         val lineLayer = LineLayer(LINE_LAYER + mUuid, LINE_SOURCE + mUuid)
         lineLayer.setProperties(
             PropertyFactory.lineColor(Color.YELLOW),
@@ -176,7 +177,7 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         val features: MutableList<Feature> = ArrayList(mPointList.size)
         val points: MutableList<Point> = ArrayList()
         for (latLng in mPointList) {
-            points.add(Point.fromLngLat(latLng.longitude, latLng.latitude))
+            points.add(Point.fromLngLat(latLng!!.longitude, latLng.latitude))
         }
         for (i in points.indices) {
             val jsonObject = JsonObject()
@@ -185,7 +186,7 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         }
         val featureCollection = FeatureCollection.fromFeatures(features)
         val jsonSource = GeoJsonSource(POINT_SOURCE + mUuid, featureCollection)
-        mMap?.style!!.addSource(jsonSource)
+        mMap!!.style!!.addSource(jsonSource)
         val stops = arrayOfNulls<Expression.Stop>(mPointList.size)
         for (i in mPointList.indices) {
             if (i == selectIndex - 1) {
@@ -214,10 +215,13 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         val center = getCenter(mPointList)
         val point = Point.fromLngLat(center.longitude, center.latitude)
         val jsonObject = JsonObject()
-        jsonObject.addProperty("length", doubleRemoveEndZero(length.toString()) + "米")
+        jsonObject.addProperty(
+            "length",
+            doubleRemoveEndZero(length.toString()) + "米"
+        )
         val jsonSource =
             GeoJsonSource(LENGTH_SOURCE + mUuid, Feature.fromGeometry(point, jsonObject))
-        mMap?.style!!.addSource(jsonSource)
+        mMap!!.style!!.addSource(jsonSource)
         val symbolLayer = SymbolLayer(LENGTH_LAYER + mUuid, LENGTH_SOURCE + mUuid)
         symbolLayer.setProperties(
             PropertyFactory.textColor(Color.BLACK),
@@ -242,7 +246,7 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      * 删除点
      */
     private fun deletePoint() {
-        mMap?.style!!.removeLayer(POINT_LAYER + mUuid)
+        mMap!!.style!!.removeLayer(POINT_LAYER + mUuid)
         mMap.style!!.removeSource(POINT_SOURCE + mUuid)
     }
 
@@ -250,7 +254,7 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      * 删除线
      */
     private fun deleteLine() {
-        mMap?.style!!.removeLayer(LINE_LAYER + mUuid)
+        mMap!!.style!!.removeLayer(LINE_LAYER + mUuid)
         mMap.style!!.removeSource(LINE_SOURCE + mUuid)
     }
 
@@ -258,7 +262,7 @@ class MeasureLength(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      * 删除长度
      */
     private fun deleteArea() {
-        mMap?.style!!.removeLayer(LENGTH_LAYER + mUuid)
+        mMap!!.style!!.removeLayer(LENGTH_LAYER + mUuid)
         mMap.style!!.removeSource(LENGTH_SOURCE + mUuid)
     }
 

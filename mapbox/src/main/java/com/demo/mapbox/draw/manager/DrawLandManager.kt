@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.PointF
 import android.view.MotionEvent
 import android.view.View
+import com.demo.drawland.LandEntity
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.demo.mapbox.draw.land.DrawLand
 import com.demo.mapbox.draw.measure.MeasureArea
@@ -18,8 +19,7 @@ import java.util.UUID
  * @desc:
  */
 class DrawLandManager @SuppressLint("ClickableViewAccessibility") constructor(
-    context: Context?,
-    private val mMapView: BaseMapView
+    context: Context?, private val mMapView: BaseMapView?
 ) : IDrawLandManager {
     private val mDrawLandList: MutableList<DrawLand>
     private var mDrawType: DrawType? = null
@@ -43,7 +43,7 @@ class DrawLandManager @SuppressLint("ClickableViewAccessibility") constructor(
      */
     @SuppressLint("ClickableViewAccessibility")
     fun addTouchListener() {
-        mMapView.setOnTouchListener { v: View?, event: MotionEvent ->
+        mMapView!!.setOnTouchListener { v: View?, event: MotionEvent ->
             if (mDrawType == null) {
                 return@setOnTouchListener false
             }
@@ -70,40 +70,37 @@ class DrawLandManager @SuppressLint("ClickableViewAccessibility") constructor(
                         if (mMoveListener != null) {
                             mMoveListener!!.onTouchEvent(event)
                         }
-                        val points: MutableList<PointF> = ArrayList()
+                        val points: MutableList<PointF?> = ArrayList()
                         var selectIndex = -1
                         when (mDrawType) {
                             DrawType.DRAW_LAND -> if (editDrawLand != null) {
-                                selectIndex = editDrawLand!!.selectIndex - 1
-                                val pointList = editDrawLand!!.pointList
-                                for (point1 in pointList) {
-                                    val screenPoint = mMapView.map!!.projection.toScreenLocation(
-                                        point1
-                                    )
+                                selectIndex = editDrawLand?.selectIndex!! - 1
+                                val pointList = editDrawLand?.pointList
+                                for (point1 in pointList!!) {
+                                    val screenPoint =
+                                        mMapView.map?.projection?.toScreenLocation(point1!!)
                                     points.add(screenPoint)
                                 }
                                 editDrawLand!!.isStartMove
                             }
 
                             DrawType.MEASURE_LENGTH -> if (editLength != null) {
-                                selectIndex = editLength!!.selectIndex - 1
-                                val pointList = editLength!!.pointList
-                                for (point1 in pointList) {
-                                    val screenPoint = mMapView.map!!.projection.toScreenLocation(
-                                        point1!!
-                                    )
+                                selectIndex = editLength?.selectIndex!! - 1
+                                val pointList = editLength?.pointList
+                                for (point1 in pointList!!) {
+                                    val screenPoint =
+                                        mMapView.map?.projection?.toScreenLocation(point1!!)
                                     points.add(screenPoint)
                                 }
                                 editLength!!.isStartMove
                             }
 
                             DrawType.MEASURE_AREA -> if (editArea != null) {
-                                selectIndex = editArea!!.selectIndex - 1
-                                val pointList = editArea!!.pointList
-                                for (point1 in pointList) {
-                                    val screenPoint = mMapView.map!!.projection.toScreenLocation(
-                                        point1!!
-                                    )
+                                selectIndex = editArea?.selectIndex!! - 1
+                                val pointList = editArea?.pointList
+                                for (point1 in pointList!!) {
+                                    val screenPoint =
+                                        mMapView.map?.projection?.toScreenLocation(point1!!)
                                     points.add(screenPoint)
                                 }
                                 editArea!!.isStartMove
@@ -145,7 +142,7 @@ class DrawLandManager @SuppressLint("ClickableViewAccessibility") constructor(
 
                 MotionEvent.ACTION_UP -> {
                     if (isTouch) {
-                        val endLocation = mMapView.map!!.projection.fromScreenLocation(pointF)
+                        val endLocation = mMapView.map?.projection?.fromScreenLocation(pointF)
                         if (mDrawType != null) {
                             when (mDrawType) {
                                 DrawType.DRAW_LAND -> if (editDrawLand != null) {
@@ -179,7 +176,7 @@ class DrawLandManager @SuppressLint("ClickableViewAccessibility") constructor(
      * 设置底图点击监听
      */
     fun addMapClickListener() {
-        mMapView.map!!.addOnMapClickListener { point: LatLng ->
+        mMapView?.map?.addOnMapClickListener { point: LatLng? ->
             add(point)
             false
         }
@@ -189,13 +186,16 @@ class DrawLandManager @SuppressLint("ClickableViewAccessibility") constructor(
      * 设置底图长按监听
      */
     fun addMapLongClickListener() {
-        mMapView.map!!.addOnMapLongClickListener { point: LatLng? ->
+        mMapView?.map?.addOnMapLongClickListener { point: LatLng ->
             var isSelect = false
-            if (mDrawType == null) {
-                isSelect = selectLand(point)
-            }
+//            if (mDrawType == null) {
+//                isSelect = selectLand(point)
+//            }
+           if( editDrawLand!=null){
+               isSelect=true
+           }
             if (mMoveListener != null) {
-                mMoveListener!!.onMapLongClicked(isSelect)
+                mMoveListener?.onMapLongClicked(isSelect)
             }
             false
         }
@@ -205,17 +205,17 @@ class DrawLandManager @SuppressLint("ClickableViewAccessibility") constructor(
         mDrawType = drawType
         when (drawType) {
             DrawType.DRAW_LAND -> {
-                editDrawLand = DrawLand(mMapView.map!!, UUID.randomUUID().toString())
+                editDrawLand = DrawLand(mMapView?.map, UUID.randomUUID().toString())
                 mDrawLandList.add(editDrawLand!!)
             }
 
             DrawType.MEASURE_LENGTH -> {
-                editLength = MeasureLength(mMapView.map, UUID.randomUUID().toString())
+                editLength = MeasureLength(mMapView?.map, UUID.randomUUID().toString())
                 mMeasureLengthList.add(editLength!!)
             }
 
             DrawType.MEASURE_AREA -> {
-                editArea = MeasureArea(mMapView.map, UUID.randomUUID().toString())
+                editArea = MeasureArea(mMapView?.map, UUID.randomUUID().toString())
                 mMeasureAreaList.add(editArea!!)
             }
 
@@ -223,7 +223,19 @@ class DrawLandManager @SuppressLint("ClickableViewAccessibility") constructor(
         }
     }
 
-    override val drawLands: List<DrawLand>
+    override fun startDraw(drawType: DrawType?, entity: LandEntity?) {
+        mDrawType = drawType
+        when (drawType) {
+            DrawType.DRAW_LAND -> {
+                editDrawLand = DrawLand(mMapView?.map, entity?.id.toString(), entity, 1)
+                mDrawLandList.add(editDrawLand!!)
+            }
+
+            else -> {}
+        }
+    }
+
+    override val drawLands: MutableList<DrawLand>
         get() = mDrawLandList
 
     override fun add(latLng: LatLng?) {
@@ -292,21 +304,17 @@ class DrawLandManager @SuppressLint("ClickableViewAccessibility") constructor(
         }
         when (mDrawType) {
             DrawType.DRAW_LAND -> {
-                if (editDrawLand != null) {
-                    editDrawLand!!.complete()
-                }
+                editDrawLand?.complete()
                 editDrawLand = null
             }
 
             DrawType.MEASURE_LENGTH -> {
-                if (editLength != null) {
-                    editLength!!.complete()
-                }
+                editLength?.complete()
                 editLength = null
             }
 
             DrawType.MEASURE_AREA -> if (editArea != null) {
-                editArea!!.complete()
+                editArea?.complete()
             }
 
             else -> {}
@@ -314,7 +322,7 @@ class DrawLandManager @SuppressLint("ClickableViewAccessibility") constructor(
         mDrawType = null
     }
 
-    override fun selectLand(point: LatLng?): Boolean {
+    override fun selectLand(point: LatLng): Boolean {
         if (mDrawType == null) {
             for (drawLand in mDrawLandList) {
                 if (drawLand.selectLand(point)) {

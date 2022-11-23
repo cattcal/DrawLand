@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import com.demo.mapbox.draw.manager.DrawType
+import com.demo.mapbox.util.DensityUtil
 import com.demo.mapbox.util.DensityUtil.dip2px
 
 /**
@@ -33,7 +34,7 @@ class LandView @JvmOverloads constructor(
      *
      * @return 点集合
      */
-    var points: MutableList<PointF>?
+    var points: MutableList<PointF?>?
         private set
     private val mPath: Path
     private var mDrawType: DrawType? = null
@@ -84,9 +85,19 @@ class LandView @JvmOverloads constructor(
     private fun drawPoint(canvas: Canvas) {
         for (i in points!!.indices) {
             val pointF = points!![i]
-            canvas.drawCircle(pointF.x, pointF.y, dip2px(12f).toFloat(), mOuterPointPaint)
+            canvas.drawCircle(
+                pointF!!.x,
+                pointF.y,
+                dip2px(12f).toFloat(),
+                mOuterPointPaint
+            )
             if (i == mSelectIndex) {
-                canvas.drawCircle(pointF.x, pointF.y, dip2px(9f).toFloat(), mInsertPointPaint)
+                canvas.drawCircle(
+                    pointF.x,
+                    pointF.y,
+                    dip2px(9f).toFloat(),
+                    mInsertPointPaint
+                )
             }
         }
     }
@@ -97,9 +108,9 @@ class LandView @JvmOverloads constructor(
         for (i in points!!.indices) {
             val pointF = points!![i]
             if (i == 0) {
-                mPath.moveTo(pointF.x, pointF.y)
+                mPath.moveTo(pointF!!.x, pointF.y)
             } else {
-                mPath.lineTo(pointF.x, pointF.y)
+                mPath.lineTo(pointF!!.x, pointF.y)
             }
         }
         if (mDrawType != DrawType.MEASURE_LENGTH) {
@@ -109,8 +120,8 @@ class LandView @JvmOverloads constructor(
         canvas.drawPath(mPath, mLinePaint)
     }
 
-    fun setTouchEvent(event: MotionEvent?) {
-        val pointF = PointF(event!!.x, event.y)
+    fun setTouchEvent(event: MotionEvent) {
+        val pointF = PointF(event.x, event.y)
         when (event.action) {
             MotionEvent.ACTION_DOWN -> visibility = VISIBLE
             MotionEvent.ACTION_MOVE -> {
@@ -124,8 +135,8 @@ class LandView @JvmOverloads constructor(
     }
 
     // 设置数据 points 点集合 selectIndex 选则的点的位置
-    fun setPoints(points: MutableList<PointF>?, selectIndex: Int) {
-        if (selectIndex == -1 || selectIndex >= points!!.size) {
+    fun setPoints(points: MutableList<PointF?>, selectIndex: Int) {
+        if (selectIndex == -1 || selectIndex >= points.size) {
             return
         }
         this.points = points

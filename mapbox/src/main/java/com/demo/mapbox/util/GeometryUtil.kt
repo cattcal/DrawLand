@@ -23,12 +23,11 @@ object GeometryUtil {
      * @param latLngList 点集合
      * @return 面积
      */
-    @JvmStatic
-    fun getArea(latLngList: List<LatLng>): BigDecimal {
+    fun getArea(latLngList: List<LatLng?>): BigDecimal {
         val points: MutableList<List<Point>> = ArrayList()
         val points1: MutableList<Point> = ArrayList()
         for (latLng in latLngList) {
-            val point = Point.fromLngLat(latLng.longitude, latLng.latitude)
+            val point = Point.fromLngLat(latLng!!.longitude, latLng.latitude)
             points1.add(point)
         }
         points.add(points1)
@@ -45,11 +44,10 @@ object GeometryUtil {
      * @param latLngList 点集合
      * @return 中心点
      */
-    @JvmStatic
-    fun getCenter(latLngList: List<LatLng>): LatLng {
+    fun getCenter(latLngList: List<LatLng?>): LatLng {
         val points: MutableList<Point> = ArrayList()
         for (latLng in latLngList) {
-            val point = Point.fromLngLat(latLng.longitude, latLng.latitude)
+            val point = Point.fromLngLat(latLng!!.longitude, latLng.latitude)
             points.add(point)
         }
         val lineString = LineString.fromLngLats(points)
@@ -64,11 +62,10 @@ object GeometryUtil {
      * @param latLngList 点集合
      * @return 长度
      */
-    @JvmStatic
-    fun getLength(latLngList: List<LatLng>): BigDecimal {
+    fun getLength(latLngList: List<LatLng?>): BigDecimal {
         val points1: MutableList<Point> = ArrayList()
         for (latLng in latLngList) {
-            val point = Point.fromLngLat(latLng.longitude, latLng.latitude)
+            val point = Point.fromLngLat(latLng!!.longitude, latLng.latitude)
             points1.add(point)
         }
         val lineString = LineString.fromLngLats(points1)
@@ -85,12 +82,11 @@ object GeometryUtil {
      * @param latLngList 面
      * @return 点是否在面内
      */
-    @JvmStatic
-    fun isSelect(point: LatLng, latLngList: List<LatLng>): Boolean {
+    fun isSelect(point: LatLng, latLngList: List<LatLng?>): Boolean {
         val pointLists: MutableList<List<Point>> = ArrayList()
         val points: MutableList<Point> = ArrayList()
         for (latLng in latLngList) {
-            points.add(Point.fromLngLat(latLng.longitude, latLng.latitude))
+            points.add(Point.fromLngLat(latLng!!.longitude, latLng.latitude))
         }
         pointLists.add(points)
         val polygon = Polygon.fromLngLats(pointLists)

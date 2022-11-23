@@ -18,9 +18,12 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import com.demo.mapbox.draw.entity.LandEntity
+import com.demo.mapbox.util.DensityUtil
 import com.demo.mapbox.util.DensityUtil.dip2px
+import com.demo.mapbox.util.GeometryUtil
 import com.demo.mapbox.util.GeometryUtil.getArea
 import com.demo.mapbox.util.GeometryUtil.getCenter
+import com.demo.mapbox.util.NumberFormatUtil
 import com.demo.mapbox.util.NumberFormatUtil.doubleRemoveEndZero
 import java.util.Stack
 
@@ -40,7 +43,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      */
     var selectIndex = 0
         private set
-    private val mPointList: MutableList<LatLng>
+    private val mPointList: MutableList<LatLng?>
 
     init {
         mLandOperas = Stack()
@@ -49,7 +52,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
     }
 
     override fun add(point: LatLng?) {
-        val pointF = mMap?.projection!!.toScreenLocation(point!!)
+        val pointF = mMap!!.projection.toScreenLocation(point!!)
         if (!touchPoint(pointF)) {
             mLandOperas.push(LandEntity(mPointList.size, mPointList))
             mPointList.add(point)
@@ -68,7 +71,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         if (isUndo) {
             val pop = mLandOperas.pop()
             mPointList.clear()
-            mPointList.addAll(pop.getLatLngList())
+            mPointList.addAll(pop.latLngList)
             selectIndex = pop.selectPosition
             draw()
         }
@@ -87,9 +90,9 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
     override fun touchPoint(point: PointF): Boolean {
         for (i in mPointList.indices) {
             val point1 = mPointList[i]
-            val point2 = mMap?.projection!!.toScreenLocation(point1)
-            if (Math.abs(point.x - point2.x) < dip2px(20f)
-                && Math.abs(point.y - point2.y) < dip2px(20f)
+            val point2 = mMap!!.projection.toScreenLocation(point1!!)
+            if (Math.abs(point.x - point2.x) < DensityUtil.dip2px(20f)
+                && Math.abs(point.y - point2.y) < DensityUtil.dip2px(20f)
             ) {
                 if (i != selectIndex - 1) { // 如果不是选中的
                     selectIndex = i + 1
@@ -120,7 +123,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      *
      * @param point 移动的点
      */
-    fun moveEnd(point: LatLng) {
+    fun moveEnd(point: LatLng?) {
         mPointList.removeAt(selectIndex - 1)
         mPointList.add(selectIndex - 1, point)
         draw()
@@ -142,7 +145,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      *
      * @return 点集合
      */
-    val pointList: List<LatLng>
+    val pointList: List<LatLng?>
         get() = mPointList
 
     /**
@@ -155,13 +158,13 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         val pointss: MutableList<List<Point>> = ArrayList()
         val points: MutableList<Point> = ArrayList()
         for (latLng in mPointList) {
-            points.add(Point.fromLngLat(latLng.longitude, latLng.latitude))
+            points.add(Point.fromLngLat(latLng!!.longitude, latLng.latitude))
         }
         pointss.add(points)
         val polygon = Polygon.fromLngLats(pointss)
         val feature = Feature.fromGeometry(polygon)
         val jsonSource = GeoJsonSource(POLYGON_SOURCE + mUuid, feature)
-        mMap?.style!!.addSource(jsonSource)
+        mMap!!.style!!.addSource(jsonSource)
         val fillLayer = FillLayer(POLYGON_LAYER + mUuid, POLYGON_SOURCE + mUuid)
         fillLayer.setProperties(
             PropertyFactory.fillColor(Color.WHITE),
@@ -179,7 +182,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         }
         val points: MutableList<Point> = ArrayList()
         for (latLng in mPointList) {
-            points.add(Point.fromLngLat(latLng.longitude, latLng.latitude))
+            points.add(Point.fromLngLat(latLng!!.longitude, latLng.latitude))
         }
         val features: MutableList<Feature> = ArrayList()
         val positions: MutableList<Point> = ArrayList(points)
@@ -190,7 +193,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         features.add(Feature.fromGeometry(lineString))
         val featureCollection = FeatureCollection.fromFeatures(features)
         val jsonSource = GeoJsonSource(LINE_SOURCE + mUuid, featureCollection)
-        mMap?.style!!.addSource(jsonSource)
+        mMap!!.style!!.addSource(jsonSource)
         val lineLayer = LineLayer(LINE_LAYER + mUuid, LINE_SOURCE + mUuid)
         lineLayer.setProperties(
             PropertyFactory.lineColor(Color.YELLOW),
@@ -206,7 +209,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         val features: MutableList<Feature> = ArrayList(mPointList.size)
         val points: MutableList<Point> = ArrayList()
         for (latLng in mPointList) {
-            points.add(Point.fromLngLat(latLng.longitude, latLng.latitude))
+            points.add(Point.fromLngLat(latLng!!.longitude, latLng.latitude))
         }
         for (i in points.indices) {
             val jsonObject = JsonObject()
@@ -215,7 +218,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         }
         val featureCollection = FeatureCollection.fromFeatures(features)
         val jsonSource = GeoJsonSource(POINT_SOURCE + mUuid, featureCollection)
-        mMap?.style!!.addSource(jsonSource)
+        mMap!!.style!!.addSource(jsonSource)
         val stops = arrayOfNulls<Expression.Stop>(mPointList.size)
         for (i in mPointList.indices) {
             if (i == selectIndex - 1) {
@@ -246,7 +249,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
         val jsonObject = JsonObject()
         jsonObject.addProperty("area", doubleRemoveEndZero(area.toString()) + "亩")
         val jsonSource = GeoJsonSource(AREA_SOURCE + mUuid, Feature.fromGeometry(point, jsonObject))
-        mMap?.style!!.addSource(jsonSource)
+        mMap!!.style!!.addSource(jsonSource)
         val symbolLayer = SymbolLayer(AREA_LAYER + mUuid, AREA_SOURCE + mUuid)
         symbolLayer.setProperties(
             PropertyFactory.textColor(Color.BLACK),
@@ -272,7 +275,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      * 删除点
      */
     private fun deletePoint() {
-        mMap?.style!!.removeLayer(POINT_LAYER + mUuid)
+        mMap!!.style!!.removeLayer(POINT_LAYER + mUuid)
         mMap.style!!.removeSource(POINT_SOURCE + mUuid)
     }
 
@@ -280,7 +283,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      * 删除线
      */
     private fun deleteLine() {
-        mMap?.style!!.removeLayer(LINE_LAYER + mUuid)
+        mMap!!.style!!.removeLayer(LINE_LAYER + mUuid)
         mMap.style!!.removeSource(LINE_SOURCE + mUuid)
     }
 
@@ -288,7 +291,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      * 删除面
      */
     private fun deletePolygon() {
-        mMap?.style!!.removeLayer(POLYGON_LAYER + mUuid)
+        mMap!!.style!!.removeLayer(POLYGON_LAYER + mUuid)
         mMap.style!!.removeSource(POLYGON_SOURCE + mUuid)
     }
 
@@ -296,7 +299,7 @@ class MeasureArea(private val mMap: MapboxMap?, uuids: String) : IMeasure {
      * 删除面积
      */
     private fun deleteArea() {
-        mMap?.style!!.removeLayer(AREA_LAYER + mUuid)
+        mMap!!.style!!.removeLayer(AREA_LAYER + mUuid)
         mMap.style!!.removeSource(AREA_SOURCE + mUuid)
     }
 

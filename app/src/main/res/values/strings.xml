@@ -269,7 +269,7 @@
     <string name="search_edittext_hint">在此处搜索示例   *</string>
     <string name="activity_dds_satellite_land_select_title">卫星土地选择</string>
 
-    <string name="bid_ins_title">验标地块</string>
+    <string name="bid_ins_title">绘制地块</string>
     <string name="survey_damage_title">查勘定损</string>
     <string name="remote_sensing_data">遥感数据</string>
 

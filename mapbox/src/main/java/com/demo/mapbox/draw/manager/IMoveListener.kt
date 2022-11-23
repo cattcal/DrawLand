@@ -16,14 +16,14 @@ interface IMoveListener {
      * @param points      屏幕的坐标点
      * @param selectIndex 移动点的下标
      */
-    fun startMove(event: MotionEvent?, points: MutableList<PointF>?, selectIndex: Int)
+    fun startMove(event: MotionEvent?, points: MutableList<PointF?>, selectIndex: Int)
 
     /**
      * 触摸事件
      *
      * @param event event
      */
-    fun onTouchEvent(event: MotionEvent?)
+    fun onTouchEvent(event: MotionEvent)
 
     /**
      * 地图长按事件

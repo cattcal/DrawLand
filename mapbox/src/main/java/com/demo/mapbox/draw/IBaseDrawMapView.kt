@@ -1,10 +1,11 @@
 package com.demo.mapbox.draw
 
 import android.os.Bundle
-import com.mapbox.mapboxsdk.geometry.LatLng
 import com.demo.mapbox.draw.manager.DrawLandManager
 import com.demo.mapbox.draw.manager.DrawType
 import com.demo.mapbox.mapview.BaseMapView
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.maps.MapboxMap
 
 /**
  * @author: hujw
@@ -29,7 +30,7 @@ interface IBaseDrawMapView {
     /**
      * 修改底图
      */
-    fun changeImageLayer(s: String)
+    fun changeImageLayer(name :String)
 
     /**
      * 添加点
@@ -59,6 +60,9 @@ interface IBaseDrawMapView {
      * @param drawType 勾画类型
      */
     fun startDraw(drawType: DrawType?)
+
+
+    fun startDraw(entity:com.demo.drawland.LandEntity?,drawType: DrawType?)
 
     /**
      * onCreate
@@ -103,4 +107,6 @@ interface IBaseDrawMapView {
      * onDestroy
      */
     fun onDestroy()
+
+
 }
