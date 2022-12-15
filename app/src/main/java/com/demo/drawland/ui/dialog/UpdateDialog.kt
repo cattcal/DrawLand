@@ -19,8 +19,8 @@ import com.hjq.http.EasyHttp
 import com.hjq.http.listener.OnDownloadListener
 import com.hjq.http.model.HttpMethod
 import com.hjq.permissions.Permission
-import com.demo.base.BaseDialog
-import com.demo.base.action.AnimAction
+import com.xdzt.base.BaseDialog
+import com.xdzt.base.action.AnimAction
 import com.demo.drawland.R
 import com.demo.drawland.aop.CheckNet
 import com.demo.drawland.aop.Permissions

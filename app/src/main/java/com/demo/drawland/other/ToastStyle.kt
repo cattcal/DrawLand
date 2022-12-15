@@ -23,14 +23,14 @@ class ToastStyle : BlackToastStyle() {
     }
 
     override fun getTextSize(context: Context): Float {
-        return context.resources.getDimension(com.demo.base.R.dimen.sp_14)
+        return context.resources.getDimension(com.xdzt.base.R.dimen.sp_14)
     }
 
     override fun getHorizontalPadding(context: Context): Int {
-        return context.resources.getDimension(com.demo.base.R.dimen.sp_24).toInt()
+        return context.resources.getDimension(com.xdzt.base.R.dimen.sp_24).toInt()
     }
 
     override fun getVerticalPadding(context: Context): Int {
-        return context.resources.getDimension(com.demo.base.R.dimen.sp_16).toInt()
+        return context.resources.getDimension(com.xdzt.base.R.dimen.sp_16).toInt()
     }
 }

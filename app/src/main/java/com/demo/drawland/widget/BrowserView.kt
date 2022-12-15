@@ -15,16 +15,16 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
-import com.demo.base.BaseActivity
-import com.demo.base.BaseDialog
-import com.demo.base.action.ActivityAction
+import com.xdzt.base.BaseActivity
+import com.xdzt.base.BaseDialog
+import com.xdzt.base.action.ActivityAction
 import com.demo.drawland.R
 import com.demo.drawland.other.AppConfig
 import com.demo.drawland.other.PermissionCallback
 import com.demo.drawland.ui.dialog.InputDialog
 import com.demo.drawland.ui.dialog.MessageDialog
 import com.demo.drawland.ui.dialog.TipsDialog
-import com.demo.widget.layout.NestedScrollWebView
+import com.xdzt.widget.layout.NestedScrollWebView
 import timber.log.Timber
 import java.util.ArrayList
 

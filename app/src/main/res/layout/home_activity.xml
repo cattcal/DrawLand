@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context="com.demo.drawland.ui.activity.HomeActivity">
 
-    <com.demo.widget.layout.NoScrollViewPager
+    <com.xdzt.widget.layout.NoScrollViewPager
         android:id="@+id/vp_home_pager"
         android:layout_width="match_parent"
         android:layout_height="0px"

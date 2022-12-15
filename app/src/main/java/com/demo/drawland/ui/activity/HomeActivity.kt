@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager.widget.ViewPager
 import com.gyf.immersionbar.ImmersionBar
 import com.hjq.permissions.Permission
-import com.demo.base.FragmentPagerAdapter
+import com.xdzt.base.FragmentPagerAdapter
 import com.demo.drawland.R
 import com.demo.drawland.aop.Permissions
 import com.demo.drawland.app.AppActivity
@@ -17,8 +17,7 @@ import com.demo.drawland.app.AppFragment
 import com.demo.drawland.manager.ActivityManager
 import com.demo.drawland.other.DoubleClickHelper
 import com.demo.drawland.ui.adapter.NavigationAdapter
-import com.demo.drawland.ui.fragment.ArcGisFragment
-import com.demo.drawland.ui.fragment.MapboxFragment
+import com.demo.drawland.ui.fragment.HomeFragment
 
 /**
  * author :hujw
@@ -33,7 +32,7 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
         private const val INTENT_KEY_IN_FRAGMENT_CLASS: String = "fragmentClass"
 
         @JvmOverloads
-        fun start(context: Context, fragmentClass: Class<out AppFragment<*>?>? = ArcGisFragment::class.java) {
+        fun start(context: Context, fragmentClass: Class<out AppFragment<*>?>? = HomeFragment::class.java) {
             val intent = Intent(context, HomeActivity::class.java)
             intent.putExtra(INTENT_KEY_IN_FRAGMENT_CLASS, fragmentClass)
             if (context !is Activity) {
@@ -68,8 +67,8 @@ class HomeActivity : AppActivity(), NavigationAdapter.OnNavigationListener {
 
     override fun initData() {
         pagerAdapter = FragmentPagerAdapter<AppFragment<*>>(this).apply {
-            addFragment(ArcGisFragment.newInstance())
-            addFragment(MapboxFragment.newInstance())
+//            addFragment(ArcGisFragment.newInstance())
+//            addFragment(MapboxFragment.newInstance())
             viewPager?.adapter = this
         }
         onNewIntent(intent)

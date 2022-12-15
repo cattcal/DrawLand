@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <com.demo.arcgis.draw.BaseDrawMapView
+    <com.xdzt.arcgis.draw.BaseDrawMapView
         android:id="@+id/base_draw_map_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

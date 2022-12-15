@@ -141,7 +141,6 @@ ksp {
 
 dependencies {
     implementation project(path: ':base')
-    implementation project(path: ':arcgis')
     implementation project(path: ':widget')
     implementation project(path: ':mapbox')
 
@@ -150,7 +149,7 @@ dependencies {
 
 //    // 标题栏框架：https://github.com/getActivity/TitleBar
     implementation 'com.github.getActivity:TitleBar:9.6'
-//
+
 //    // 吐司框架：https://github.com/getActivity/ToastUtils
     implementation 'com.github.getActivity:ToastUtils:11.2'
 
@@ -223,6 +222,13 @@ dependencies {
     implementation "com.github.liujingxing.rxlife:rxlife-rxjava3:$rxlife_version"
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
     implementation "io.reactivex.rxjava3:rxjava:$rxjava_version"
+
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-service:$lifecycle_version"
+
+    implementation 'me.rosuh:AndroidFilePicker:0.8.2'
 
     // 多语种：https://github.com/getActivity/MultiLanguages
     // 悬浮窗：https://github.com/getActivity/XToast

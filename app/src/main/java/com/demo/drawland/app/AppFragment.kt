@@ -1,6 +1,6 @@
 package com.demo.drawland.app
 
-import com.demo.base.BaseFragment
+import com.xdzt.base.BaseFragment
 import com.demo.drawland.action.ToastAction
 
 /**

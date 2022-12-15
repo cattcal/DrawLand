@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
-import com.demo.base.BaseDialog
+import com.xdzt.base.BaseDialog
 import com.demo.drawland.R
 import com.demo.drawland.app.AppAdapter
 import com.demo.drawland.ui.adapter.SelectAdapter

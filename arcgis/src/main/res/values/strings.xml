@@ -1,7 +1,0 @@
-<resources>
-    <!-- arcgis 的key-->
-    <string name="arcgis_key">AAPKf77fbff228fb4ad694bea61975fb15c5ck3gEIT9s2x77qRnO17c4bALjkXCtO-J5zsSY0m2cHX8J-ggwMj4bUFxX8TWfs4S</string>
-
-    <string name="location_failure">定位失败</string>
-    <string name="out_of_china">当前位置超出中国</string>
-</resources>

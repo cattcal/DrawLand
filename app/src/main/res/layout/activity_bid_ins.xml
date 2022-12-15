@@ -15,7 +15,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.demo.mapbox.draw.BaseDrawMapView
+    <com.xdzt.mapbox.draw.BaseDrawMapView
         android:id="@+id/base_draw_map_view"
         android:layout_width="0dp"
         android:layout_height="0dp"

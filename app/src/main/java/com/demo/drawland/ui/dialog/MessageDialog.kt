@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.View
 import android.widget.TextView
 import androidx.annotation.StringRes
-import com.demo.base.BaseDialog
+import com.xdzt.base.BaseDialog
 import com.demo.drawland.R
 import com.demo.drawland.aop.SingleClick
 

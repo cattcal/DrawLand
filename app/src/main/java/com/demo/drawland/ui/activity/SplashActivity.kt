@@ -11,7 +11,7 @@ import com.gyf.immersionbar.ImmersionBar
 import com.demo.drawland.R
 import com.demo.drawland.app.AppActivity
 import com.demo.drawland.other.AppConfig
-import com.demo.widget.view.SlantedTextView
+import com.xdzt.widget.view.SlantedTextView
 import java.util.*
 
 /**

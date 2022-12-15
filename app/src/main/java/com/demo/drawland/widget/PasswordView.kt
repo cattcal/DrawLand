@@ -38,10 +38,10 @@ class PasswordView @JvmOverloads constructor
     private val pointPaint: Paint = Paint()
 
     /** 单个密码框的宽度 */
-    private val itemWidth: Int = resources.getDimension(com.demo.base.R.dimen.dp_44).toInt()
+    private val itemWidth: Int = resources.getDimension(com.xdzt.base.R.dimen.dp_44).toInt()
 
     /** 单个密码框的高度 */
-    private val itemHeight: Int = resources.getDimension(com.demo.base.R.dimen.dp_41).toInt()
+    private val itemHeight: Int = resources.getDimension(com.xdzt.base.R.dimen.dp_41).toInt()
 
     /** 已经输入的密码个数，也就是需要显示的小黑点个数 */
     private var currentIndex: Int = 0

@@ -27,8 +27,12 @@ dependencyResolutionManagement {
 }
 rootProject.name = "DrawLand"
 include ':app'
-include ':arcgis'
 include ':widget'
 include ':base'
 include ':mapbox'
 include ':location'
+
+project(':mapbox').setProjectDir(new File('..' + File.separator + 'mapbox'))
+project(':location').setProjectDir(new File('..' + File.separator + 'location'))
+project(':base').setProjectDir(new File('..' + File.separator + 'base'))
+project(':widget').setProjectDir(new File('..' + File.separator + 'widget'))

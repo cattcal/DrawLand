@@ -8,7 +8,7 @@ import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import com.hjq.bar.style.LightBarStyle
 import com.demo.drawland.R
-import com.demo.widget.view.PressAlphaTextView
+import com.xdzt.widget.view.PressAlphaTextView
 
 /**
  * author :hujw
@@ -46,30 +46,30 @@ class TitleBarStyle : LightBarStyle() {
     }
 
     override fun getChildVerticalPadding(context: Context): Int {
-        return context.resources.getDimension(com.demo.base.R.dimen.dp_14).toInt()
+        return context.resources.getDimension(com.xdzt.base.R.dimen.dp_14).toInt()
     }
 
     override fun getTitleSize(context: Context): Float {
-        return context.resources.getDimension(com.demo.base.R.dimen.sp_15)
+        return context.resources.getDimension(com.xdzt.base.R.dimen.sp_15)
     }
 
     override fun getLeftTitleSize(context: Context): Float {
-        return context.resources.getDimension(com.demo.base.R.dimen.sp_13)
+        return context.resources.getDimension(com.xdzt.base.R.dimen.sp_13)
     }
 
     override fun getRightTitleSize(context: Context): Float {
-        return context.resources.getDimension(com.demo.base.R.dimen.sp_13)
+        return context.resources.getDimension(com.xdzt.base.R.dimen.sp_13)
     }
 
     override fun getTitleIconPadding(context: Context): Int {
-        return context.resources.getDimension(com.demo.base.R.dimen.dp_2).toInt()
+        return context.resources.getDimension(com.xdzt.base.R.dimen.dp_2).toInt()
     }
 
     override fun getLeftIconPadding(context: Context): Int {
-        return context.resources.getDimension(com.demo.base.R.dimen.dp_2).toInt()
+        return context.resources.getDimension(com.xdzt.base.R.dimen.dp_2).toInt()
     }
 
     override fun getRightIconPadding(context: Context): Int {
-        return context.resources.getDimension(com.demo.base.R.dimen.dp_2).toInt()
+        return context.resources.getDimension(com.xdzt.base.R.dimen.dp_2).toInt()
     }
 }

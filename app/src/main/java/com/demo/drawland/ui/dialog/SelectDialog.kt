@@ -7,8 +7,8 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.hjq.toast.ToastUtils
-import com.demo.base.BaseAdapter
-import com.demo.base.BaseDialog
+import com.xdzt.base.BaseAdapter
+import com.xdzt.base.BaseDialog
 import com.demo.drawland.R
 import com.demo.drawland.aop.SingleClick
 import com.demo.drawland.app.AppAdapter
@@ -30,6 +30,7 @@ class SelectDialog {
 
         init {
             setCustomView(R.layout.select_dialog)
+            setCancelable(false)
             recyclerView?.itemAnimator = null
             adapter = SelectAdapter(getContext())
             recyclerView?.adapter = adapter

@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.View
 import androidx.annotation.IntRange
 import androidx.annotation.LayoutRes
-import com.demo.base.BaseAdapter
+import com.xdzt.base.BaseAdapter
 import java.util.ArrayList
 
 /**

@@ -14,7 +14,6 @@ import javax.net.ssl.SSLSession
 
 object RxHttpManager {
 
-
     fun init(context: Application) {
         val file = File(context.externalCacheDir, "RxHttpCookie")
         val sslParams = HttpsUtils.getSslSocketFactory()

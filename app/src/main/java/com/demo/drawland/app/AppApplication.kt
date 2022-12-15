@@ -15,14 +15,12 @@ import com.hjq.bar.TitleBar
 import com.hjq.gson.factory.GsonFactory
 import com.hjq.toast.ToastLogInterceptor
 import com.hjq.toast.ToastUtils
-import com.mapbox.mapboxsdk.Mapbox
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.ClassicsHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.scwang.smart.refresh.layout.api.RefreshLayout
 import com.tencent.bugly.crashreport.CrashReport
 import com.tencent.mmkv.MMKV
-import com.demo.arcgis.ArcGisManager
 import com.demo.drawland.R
 import com.demo.drawland.aop.Log
 import com.demo.drawland.http.glide.GlideApp
@@ -66,15 +64,15 @@ class AppApplication : Application() {
             TitleBar.setDefaultStyle(TitleBarStyle())
 
             // 设置全局的 Header 构建器
-            SmartRefreshLayout.setDefaultRefreshHeaderCreator{ context: Context, layout: RefreshLayout ->
+            SmartRefreshLayout.setDefaultRefreshHeaderCreator{ context: Context, _: RefreshLayout ->
                 ClassicsHeader(context).setAccentColorId(R.color.common_accent_color)
             }
             // 设置全局的 Footer 构建器
-            SmartRefreshLayout.setDefaultRefreshFooterCreator{ context: Context, layout: RefreshLayout ->
+            SmartRefreshLayout.setDefaultRefreshFooterCreator{ context: Context, _: RefreshLayout ->
                 ClassicsFooter(context).setAccentColorId(R.color.common_accent_color)
             }
             // 设置全局初始化器
-            SmartRefreshLayout.setDefaultRefreshInitializer { context: Context, layout: RefreshLayout ->
+            SmartRefreshLayout.setDefaultRefreshInitializer { _: Context, layout: RefreshLayout ->
                 // 刷新头部是否跟随内容偏移
                 layout.setEnableHeaderTranslationContent(true)
                     // 刷新尾部是否跟随内容偏移
@@ -98,17 +96,12 @@ class AppApplication : Application() {
             CrashHandler.register(application)
 
             RxHttpManager.init(application)
-            // 友盟统计、登录、分享 SDK
-//            UmengClient.init(application, AppConfig.isLogEnable())
 
             // Bugly 异常捕捉
             CrashReport.initCrashReport(application, AppConfig.getBuglyId(), AppConfig.isDebug())
 
             // Activity 栈管理初始化
             ActivityManager.getInstance().init(application)
-            //ArcGis 初始化
-            ArcGisManager.getInstance().init(application)
-            Mapbox.getInstance(application,application.getString(R.string.mapbox_access_token))
             // MMKV 初始化
             MMKV.initialize(application)
 

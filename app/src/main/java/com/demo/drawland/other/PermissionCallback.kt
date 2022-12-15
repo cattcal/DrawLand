@@ -7,7 +7,7 @@ import com.hjq.permissions.OnPermissionCallback
 import com.hjq.permissions.Permission
 import com.hjq.permissions.XXPermissions
 import com.hjq.toast.ToastUtils
-import com.demo.base.BaseDialog
+import com.xdzt.base.BaseDialog
 import com.demo.drawland.R
 import com.demo.drawland.manager.ActivityManager
 import com.demo.drawland.ui.dialog.MessageDialog

@@ -6,8 +6,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import com.demo.base.BaseDialog
-import com.demo.base.action.AnimAction
+import com.xdzt.base.BaseDialog
+import com.xdzt.base.action.AnimAction
 import com.demo.drawland.R
 
 /**

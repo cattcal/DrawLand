@@ -3,8 +3,8 @@ package com.demo.drawland.app
 import androidx.annotation.StringRes
 import com.gyf.immersionbar.ImmersionBar
 import com.hjq.bar.TitleBar
-import com.demo.base.BaseActivity
-import com.demo.base.BaseDialog
+import com.xdzt.base.BaseActivity
+import com.xdzt.base.BaseDialog
 import com.demo.drawland.R
 import com.demo.drawland.action.TitleBarAction
 import com.demo.drawland.action.ToastAction
